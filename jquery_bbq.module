@@ -1,0 +1,36 @@
+<?php
+// $Id: $Id$ $
+
+/**
+ * Implementation of hook_preprocess_page().
+ *
+ * Provide jquery-bbq.
+ */
+function jquery_bbq_preprocess_page(&$variables) {
+  global $theme;
+  $admin_theme = variable_get('admin_theme', false);
+
+  // Only use bbq with the front-end theme.
+  if (!$admin_theme || $theme != $admin_theme) {
+    if ($_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest') {
+      array_push($variables['template_files'], 'page-ajax');
+    } else {
+      $module_path = drupal_get_path('module', 'jquery_bbq');
+      drupal_add_js($module_path.'/jquery-bbq/jquery.ba-bbq.js', 'module');
+      drupal_add_js($module_path.'/jquery-bbq/jquery.bbq.pjax.js', 'module');
+      drupal_add_js($module_path.'/jquery_bbq.js', 'module');
+    }
+  }
+}
+
+/**
+ * Implementation of hook_theme_registry_alter().
+ *
+ * Provide default AJAX page template.
+ */
+function jquery_bbq_theme_registry_alter(&$theme_registry) {
+  if (isset($theme_registry['page']) && isset($theme_registry['page']['theme paths'])) {
+    $module_path = drupal_get_path('module', 'jquery_bbq');
+    array_unshift($theme_registry['page']['theme paths'], $module_path.'/theme');
+  }
+}

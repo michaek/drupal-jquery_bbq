@@ -1,0 +1,4 @@
+name = jQuery BBQ
+description = Adds support for jQuery BBQ
+core = 6.x
+package = User interface
