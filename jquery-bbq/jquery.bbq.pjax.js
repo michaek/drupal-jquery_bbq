@@ -31,10 +31,11 @@
       // Set up the initial pjax-page content.
       var $pjaxPage = $pjaxWrapTemplate.clone()
       $pjaxPage.append($container.children()).appendTo($container)
+      $pjaxPage.data('pjax-title', document.title)
       $currentPage = cache[lastURL] = $pjaxPage
     
       $(options.linkSelector).live('click', function(event){
-        $link = $(event.srcElement)
+        $link = $(this)
         
         // Get the url from the link's href attribute, stripping any leading #.
         $.bbq.pushState( $link.attr( 'href' ).replace( /^#/, '' ), 2 )
@@ -58,7 +59,8 @@
       } else {
         $container.addClass('pjax-loading')
         cache[rel_url] = $pjaxWrapTemplate.clone().data('pjax-url', rel_url)
-        cache[rel_url].load(url, function(){
+        var delim = url.indexOf('?') == -1 ? '?' : '&'
+        cache[rel_url].load(url+delim+'_pjax=true', function(){
           $(this).find('meta').remove()
           $(this).data('pjax-title', $.trim( $(this).find('title').remove().text() ))
           $(this).hide().appendTo($container)
@@ -71,8 +73,10 @@
     var transition = function($to){
       // Make some guesses about the direction we're navigating by inspecting the URLs.
       var dir = 'same'
-      var fromDepth = $currentPage.data('pjax-url') ? $currentPage.data('pjax-url').replace(/\/&/, '').split('/').length : 0
-      var toDepth = $to.data('pjax-url') ? $to.data('pjax-url').replace(/\/&/, '').split('/').length : 0
+      var initialDepth = initialUrl.replace(/\/$/, '').split('/').length
+      var fromDepth = $currentPage.data('pjax-url') ? $currentPage.data('pjax-url').replace(/\/$/, '').split('/').length : initialDepth
+      var toDepth = $to.data('pjax-url') ? $to.data('pjax-url').replace(/\/$/, '').split('/').length : initialDepth
+      
       if (fromDepth > toDepth) {
         dir = 'up'
       } else if (fromDepth < toDepth) {
@@ -111,5 +115,7 @@
       : window.location.hash.replace(/^#/, '')
     return url != '' ? url : rootUrlPlaceholder
   }
+
+  var initialUrl = rootRelativeUrl(window.location.href)
 
 })(jQuery)

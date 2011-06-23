@@ -18,7 +18,7 @@ function jquery_bbq_preprocess_page(&$variables) {
       $module_path = drupal_get_path('module', 'jquery_bbq');
       drupal_add_js($module_path.'/jquery-bbq/jquery.ba-bbq.js', 'module');
       drupal_add_js($module_path.'/jquery-bbq/jquery.bbq.pjax.js', 'module');
-      drupal_add_js($module_path.'/jquery_bbq.js', 'module');
+      // drupal_add_js($module_path.'/jquery_bbq.js', 'module');
     }
   }
 }
