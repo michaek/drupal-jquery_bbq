@@ -3,5 +3,8 @@ $('#content').bbq_pjax({
   transition: function($from, $to, dir){
     $from.slideUp()
     $to.slideDown()
+  },
+  load: function($loaded) {
+    Drupal.attachBehaviors($loaded)
   }
 });
